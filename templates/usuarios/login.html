@@ -1,0 +1,21 @@
+{% if messages %}
+  <!-- Modal de cierre de sesión -->
+  <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content text-center p-4">
+        <img src="{% static 'imagen/logo_oficial.png' %}" alt="Logo Hospital" width="90" class="mx-auto mb-3">
+        <h5 class="modal-title" id="logoutModalLabel">Sesión cerrada</h5>
+        <p class="mt-2">{{ messages|first }}</p>
+        <button type="button" class="btn btn-primary w-50 mt-3" data-bs-dismiss="modal">Aceptar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Espera a que cargue la página y muestra el modal automáticamente
+    document.addEventListener("DOMContentLoaded", function() {
+      var logoutModal = new bootstrap.Modal(document.getElementById('logoutModal'));
+      logoutModal.show();
+    });
+  </script>
+{% endif %}

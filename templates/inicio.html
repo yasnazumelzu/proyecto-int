@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sistema Hospitalario — Herminda Martín{% endblock %}
+
+{% block content %}
+<style>
+  body {
+    background-color: #f8fafc;
+    font-family: "Segoe UI", sans-serif;
+  }
+
+  header {
+    background-color: #003366;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+    border-bottom: 4px solid #0055a5;
+  }
+
+  header img {
+    height: 70px;
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    margin: 0;
+    font-weight: bold;
+  }
+
+  h2 {
+    font-size: 1rem;
+    font-weight: normal;
+    margin: 0;
+  }
+
+  .card {
+    margin: 50px auto 100px auto;
+    width: 80%;
+    max-width: 900px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    border: none;
+  }
+
+  .card-header {
+    background-color: #0055a5;
+    color: white;
+    font-weight: bold;
+  }
+
+  .btn-hospital {
+    background-color: #0055a5;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: 0.3s;
+  }
+
+  .btn-hospital:hover {
+    background-color: #003366;
+  }
+
+  footer {
+    background-color: #003366;
+    color: white;
+    text-align: center;
+    padding: 12px 0;
+    font-size: 14px;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+  }
+
+  footer small {
+    display: block;
+    font-size: 12px;
+  }
+</style>
+
+<header>
+  <img src="{% static 'imagenes/logo_oficial.jpeg' %}" alt="Logo Hospital">
+  <h1>Hospital Clínico Herminda Martín de Chillán</h1>
+  <h2>Ministerio de Salud — Gobierno de Chile</h2>
+</header>
+
+<div class="card shadow-sm border-0">
+  <div class="card-header bg-primary text-white">
+     Bienvenida al Sistema Hospitalario
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">Bienvenida Funcionaria(o)</h5>
+    <p class="card-text">
+      Este sistema permite gestionar los registros del <strong>Formulario Único de Registro de Nacimiento e Intervención (URNI)</strong> y centralizar la información del área obstétrica.
+    </p>
+
+    <h6>Accesos rápidos</h6>
+    <a href="{% url 'login' %}" class="btn btn-hospital">Iniciar sesión</a>
+    
+    <div class="alert alert-info mt-3">
+      <strong>💡 Consejo:</strong> Mantenga actualizados los datos del formulario URNI y asegúrese de completar todos los campos antes de guardar.
+    </div>
+  </div>
+</div>
+
+<footer>
+  © 2025 Hospital Clínico Herminda Martín — Chillán
+  <small>Ministerio de Salud — Gobierno de Chile</small>
+</footer>
+{% endblock %}

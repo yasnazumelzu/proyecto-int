@@ -1,3 +1,8 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from pacientes.models import Paciente  # Importa el modelo Paciente
 
-# Create your views here.
+@login_required
+def dashboard_enfermero(request):
+    pacientes = Paciente.objects.all()  # Carga todos los pacientes
+    return render(request, 'enfermero/dashboard.html', {'pacientes': pacientes})

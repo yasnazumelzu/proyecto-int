@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'admistrativos',
+    'administrativos',
     'enfermero',
     'medico',
     'matrona',
@@ -65,7 +65,7 @@ ROOT_URLCONF = 'hospital.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -87,12 +87,14 @@ WSGI_APPLICATION = 'hospital.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('BD_HOST'),
-        'PORT': config('3306'),
-        'NAME': BASE_DIR / 'db.mysql',
+        'NAME': 'hospital_herminda_martin',          # Nombre de tu base de datos MySQL
+        'USER': 'root',                 # Tu usuario MySQL
+        'PASSWORD': '123456789',    # Tu contraseña
+        'HOST': 'localhost',            # o la IP del servidor
+        'PORT': '3306',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 
@@ -139,3 +141,17 @@ AUTH_USER_MODEL = 'usuarios.Usuario'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# ==============================
+# 🔐 CONFIGURACIÓN DE LOGIN Y LOGOUT
+# ==============================
+
+# URL donde se redirige después de iniciar sesión
+LOGIN_REDIRECT_URL = '/login/'   # o podrías poner '/' si quieres ir al inicio general
+
+# URL donde se redirige después de cerrar sesión
+LOGOUT_REDIRECT_URL = '/login/'
+
+# URL personalizada del formulario de login
+LOGIN_URL = '/login/'
