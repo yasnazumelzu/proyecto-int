@@ -7,7 +7,6 @@ from administrativos import views as admin_views
 
 urlpatterns = [
     path('login', views.login_view, name='login'),
-    path('logout', views.logout_view, name='logout'),
     path('medico/', medico_views.dashboard_medico, name='dashboard_medico'),
     path('matrona/', matrona_views.dashboard_matrona, name='dashboard_matrona'),
     path('enfermero/', enfermero_views.dashboard_enfermero, name='dashboard_enfermero'),

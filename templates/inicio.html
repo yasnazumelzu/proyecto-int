@@ -1,71 +1,73 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Sistema Hospitalario — Herminda Martín{% endblock %}
+{% block title %}Hospital Clínico Herminda Martín — Sistema Hospitalario{% endblock %}
 
 {% block content %}
 <style>
   body {
-    background-color: #f8fafc;
+    background-color: #0b4a91;
     font-family: "Segoe UI", sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
   }
 
-  header {
-    background-color: #003366;
-    color: white;
+  .inicio-card {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    width: 420px;
     text-align: center;
-    padding: 20px 0;
-    border-bottom: 4px solid #0055a5;
+    padding: 2.5rem 2rem;
   }
 
-  header img {
-    height: 70px;
-    margin-bottom: 10px;
+  .inicio-card img {
+    width: 90px;
+    margin-bottom: 15px;
   }
 
-  h1 {
-    font-size: 1.8rem;
-    margin: 0;
+  .inicio-card h1 {
+    color: #003366;
     font-weight: bold;
+    font-size: 1.4rem;
+    margin-bottom: 5px;
   }
 
-  h2 {
-    font-size: 1rem;
-    font-weight: normal;
-    margin: 0;
+  .inicio-card small {
+    color: #666;
+    display: block;
+    margin-bottom: 20px;
   }
 
-  .card {
-    margin: 50px auto 100px auto;
-    width: 80%;
-    max-width: 900px;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  .inicio-card p {
+    color: #444;
+    font-size: 0.95rem;
+  }
+
+  .btn-iniciar {
+    background-color: #003366;
+    color: #fff;
     border: none;
-  }
-
-  .card-header {
-    background-color: #0055a5;
-    color: white;
-    font-weight: bold;
-  }
-
-  .btn-hospital {
-    background-color: #0055a5;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    font-weight: 500;
     transition: 0.3s;
   }
 
-  .btn-hospital:hover {
-    background-color: #003366;
+  .btn-iniciar:hover {
+    background-color: #00264d;
   }
 
   footer {
     background-color: #003366;
     color: white;
+    font-size: 0.9rem;
+    margin-top: 25px;
     text-align: center;
     padding: 12px 0;
     font-size: 14px;
@@ -81,33 +83,19 @@
   }
 </style>
 
-<header>
-  <img src="{% static 'imagenes/logo_oficial.jpeg' %}" alt="Logo Hospital">
-  <h1>Hospital Clínico Herminda Martín de Chillán</h1>
-  <h2>Ministerio de Salud — Gobierno de Chile</h2>
-</header>
+<div class="inicio-card">
+  <img src="{% static 'imagen/logo_oficial.png' %}" alt="Logo Hospital">
+  <h1>Hospital Clínico Herminda Martín</h1>
+  <small>Sistema de Ginecobstetricia y Recién Nacido</small>
 
-<div class="card shadow-sm border-0">
-  <div class="card-header bg-primary text-white">
-     Bienvenida al Sistema Hospitalario
-  </div>
-  <div class="card-body">
-    <h5 class="card-title">Bienvenida Funcionaria(o)</h5>
-    <p class="card-text">
-      Este sistema permite gestionar los registros del <strong>Formulario Único de Registro de Nacimiento e Intervención (URNI)</strong> y centralizar la información del área obstétrica.
-    </p>
+  <p>Bienvenida(o) al Sistema Hospitalario.  
+  Gestione los registros del área de obstetricia de manera segura y centralizada.</p>
 
-    <h6>Accesos rápidos</h6>
-    <a href="{% url 'login' %}" class="btn btn-hospital">Iniciar sesión</a>
-    
-    <div class="alert alert-info mt-3">
-      <strong>💡 Consejo:</strong> Mantenga actualizados los datos del formulario URNI y asegúrese de completar todos los campos antes de guardar.
-    </div>
-  </div>
+  <a href="{% url 'login' %}" class="btn btn-iniciar mt-3">Iniciar sesión</a>
 </div>
 
 <footer>
-  © 2025 Hospital Clínico Herminda Martín — Chillán
+  © 2025 Hospital Clínico Herminda Martín — Chillán<br>
   <small>Ministerio de Salud — Gobierno de Chile</small>
 </footer>
 {% endblock %}
