@@ -1,0 +1,249 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Auditoría del Sistema — TI</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f5f5f5;
+      font-family: "Segoe UI", sans-serif;
+    }
+    .header-section {
+      background-color: #2196F3;
+      color: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: white;
+      border-left: 6px solid #2196F3;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .btn-ti {
+      background-color: #2196F3;
+      color: white;
+      border: none;
+    }
+    .btn-ti:hover {
+      background-color: #1976D2;
+      color: white;
+    }
+    .badge-accion {
+      font-size: 0.75rem;
+      padding: 0.35em 0.65em;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-4">
+    <div class="header-section">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h3 class="mb-0">📋 Auditoría del Sistema</h3>
+          <p class="mb-0">Registro completo de todas las acciones realizadas</p>
+        </div>
+        <div>
+          <a href="{% url 'dashboard_ti' %}" class="btn btn-outline-light">Volver</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="row mb-4">
+      <div class="col-md-2 mb-3">
+        <div class="stat-card">
+          <h5 class="fw-bold mb-0">{{ total_registros|default:0 }}</h5>
+          <small>Total Registros</small>
+        </div>
+      </div>
+      <div class="col-md-2 mb-3">
+        <div class="stat-card">
+          <h5 class="fw-bold mb-0 text-success">{{ total_creaciones|default:0 }}</h5>
+          <small>Creaciones</small>
+        </div>
+      </div>
+      <div class="col-md-2 mb-3">
+        <div class="stat-card">
+          <h5 class="fw-bold mb-0 text-info">{{ total_lecturas|default:0 }}</h5>
+          <small>Lecturas</small>
+        </div>
+      </div>
+      <div class="col-md-2 mb-3">
+        <div class="stat-card">
+          <h5 class="fw-bold mb-0 text-warning">{{ total_actualizaciones|default:0 }}</h5>
+          <small>Actualizaciones</small>
+        </div>
+      </div>
+      <div class="col-md-2 mb-3">
+        <div class="stat-card">
+          <h5 class="fw-bold mb-0 text-danger">{{ total_eliminaciones|default:0 }}</h5>
+          <small>Eliminaciones</small>
+        </div>
+      </div>
+      <div class="col-md-2 mb-3">
+        <div class="stat-card">
+          <h5 class="fw-bold mb-0 text-danger">{{ total_errores|default:0 }}</h5>
+          <small>Errores</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <form method="get" class="row g-3">
+          <div class="col-md-3">
+            <label class="form-label">Usuario</label>
+            <input type="text" name="usuario" class="form-control" value="{{ usuario_filter }}" placeholder="Buscar usuario...">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Acción</label>
+            <select name="accion" class="form-select">
+              <option value="">Todas</option>
+              <option value="CREATE" {% if accion_filter == 'CREATE' %}selected{% endif %}>Crear</option>
+              <option value="READ" {% if accion_filter == 'READ' %}selected{% endif %}>Leer</option>
+              <option value="UPDATE" {% if accion_filter == 'UPDATE' %}selected{% endif %}>Actualizar</option>
+              <option value="DELETE" {% if accion_filter == 'DELETE' %}selected{% endif %}>Eliminar</option>
+              <option value="LOGIN" {% if accion_filter == 'LOGIN' %}selected{% endif %}>Login</option>
+              <option value="LOGOUT" {% if accion_filter == 'LOGOUT' %}selected{% endif %}>Logout</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Método HTTP</label>
+            <select name="metodo" class="form-select">
+              <option value="">Todos</option>
+              <option value="GET" {% if metodo_filter == 'GET' %}selected{% endif %}>GET</option>
+              <option value="POST" {% if metodo_filter == 'POST' %}selected{% endif %}>POST</option>
+              <option value="PUT" {% if metodo_filter == 'PUT' %}selected{% endif %}>PUT</option>
+              <option value="PATCH" {% if metodo_filter == 'PATCH' %}selected{% endif %}>PATCH</option>
+              <option value="DELETE" {% if metodo_filter == 'DELETE' %}selected{% endif %}>DELETE</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Modelo</label>
+            <input type="text" name="modelo" class="form-control" value="{{ modelo_filter }}" placeholder="Nombre modelo...">
+          </div>
+          <div class="col-md-1">
+            <label class="form-label">Fecha Desde</label>
+            <input type="date" name="fecha_desde" class="form-control" value="{{ fecha_desde }}">
+          </div>
+          <div class="col-md-1">
+            <label class="form-label">Fecha Hasta</label>
+            <input type="date" name="fecha_hasta" class="form-control" value="{{ fecha_hasta }}">
+          </div>
+          <div class="col-md-1 d-flex align-items-end">
+            <div class="form-check">
+              <input type="checkbox" name="solo_exitosos" class="form-check-input" id="exitosos" {% if solo_exitosos %}checked{% endif %}>
+              <label class="form-check-label" for="exitosos">Solo exitosos</label>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <button type="submit" class="btn btn-ti">Filtrar</button>
+            <a href="{% url 'lista_auditoria' %}" class="btn btn-outline-secondary">Limpiar</a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Lista de Registros -->
+    <div class="card">
+      <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Registros de Auditoría ({{ total_registros }})</h5>
+      </div>
+      <div class="card-body">
+        {% if page_obj %}
+          <div class="table-responsive">
+            <table class="table table-hover table-sm">
+              <thead>
+                <tr>
+                  <th>Fecha/Hora</th>
+                  <th>Usuario</th>
+                  <th>Acción</th>
+                  <th>Método</th>
+                  <th>Modelo</th>
+                  <th>URL</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for registro in page_obj %}
+                <tr>
+                  <td>{{ registro.fecha_hora|date:"d/m/Y H:i:s" }}</td>
+                  <td>{{ registro.usuario.username|default:"Anónimo" }}</td>
+                  <td>
+                    <span class="badge 
+                      {% if registro.accion == 'CREATE' %}bg-success
+                      {% elif registro.accion == 'READ' %}bg-info
+                      {% elif registro.accion == 'UPDATE' %}bg-warning
+                      {% elif registro.accion == 'DELETE' %}bg-danger
+                      {% elif registro.accion == 'LOGIN' %}bg-primary
+                      {% elif registro.accion == 'LOGOUT' %}bg-secondary
+                      {% else %}bg-dark{% endif %} badge-accion">
+                      {{ registro.get_accion_display }}
+                    </span>
+                  </td>
+                  <td><code>{{ registro.metodo_http }}</code></td>
+                  <td>{{ registro.nombre_modelo|default:"-" }}</td>
+                  <td><small>{{ registro.url|truncatechars:50 }}</small></td>
+                  <td>
+                    {% if registro.exito %}
+                      <span class="badge bg-success">✓ {{ registro.codigo_respuesta|default:"-" }}</span>
+                    {% else %}
+                      <span class="badge bg-danger">✗ {{ registro.codigo_respuesta|default:"-" }}</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <a href="{% url 'detalle_auditoria' registro.id %}" class="btn btn-sm btn-outline-primary">Ver</a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Paginación -->
+          <nav aria-label="Paginación">
+            <ul class="pagination justify-content-center">
+              {% if page_obj.has_previous %}
+                <li class="page-item">
+                  <a class="page-link" href="?page=1{% if usuario_filter %}&usuario={{ usuario_filter }}{% endif %}{% if accion_filter %}&accion={{ accion_filter }}{% endif %}{% if metodo_filter %}&metodo={{ metodo_filter }}{% endif %}{% if modelo_filter %}&modelo={{ modelo_filter }}{% endif %}{% if fecha_desde %}&fecha_desde={{ fecha_desde }}{% endif %}{% if fecha_hasta %}&fecha_hasta={{ fecha_hasta }}{% endif %}">Primera</a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if usuario_filter %}&usuario={{ usuario_filter }}{% endif %}{% if accion_filter %}&accion={{ accion_filter }}{% endif %}{% if metodo_filter %}&metodo={{ metodo_filter }}{% endif %}{% if modelo_filter %}&modelo={{ modelo_filter }}{% endif %}{% if fecha_desde %}&fecha_desde={{ fecha_desde }}{% endif %}{% if fecha_hasta %}&fecha_hasta={{ fecha_hasta }}{% endif %}">Anterior</a>
+                </li>
+              {% endif %}
+              
+              <li class="page-item active">
+                <span class="page-link">
+                  Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                </span>
+              </li>
+              
+              {% if page_obj.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if usuario_filter %}&usuario={{ usuario_filter }}{% endif %}{% if accion_filter %}&accion={{ accion_filter }}{% endif %}{% if metodo_filter %}&metodo={{ metodo_filter }}{% endif %}{% if modelo_filter %}&modelo={{ modelo_filter }}{% endif %}{% if fecha_desde %}&fecha_desde={{ fecha_desde }}{% endif %}{% if fecha_hasta %}&fecha_hasta={{ fecha_hasta }}{% endif %}">Siguiente</a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if usuario_filter %}&usuario={{ usuario_filter }}{% endif %}{% if accion_filter %}&accion={{ accion_filter }}{% endif %}{% if metodo_filter %}&metodo={{ metodo_filter }}{% endif %}{% if modelo_filter %}&modelo={{ modelo_filter }}{% endif %}{% if fecha_desde %}&fecha_desde={{ fecha_desde }}{% endif %}{% if fecha_hasta %}&fecha_hasta={{ fecha_hasta }}{% endif %}">Última</a>
+                </li>
+              {% endif %}
+            </ul>
+          </nav>
+        {% else %}
+          <div class="alert alert-info">
+            No se encontraron registros de auditoría.
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+

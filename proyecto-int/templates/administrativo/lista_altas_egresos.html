@@ -1,0 +1,148 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Altas y Egresos — Administrativo</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f4f7fa;
+      font-family: "Segoe UI", sans-serif;
+    }
+    .header-section {
+      background-color: #334155;
+      color: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      margin-bottom: 2rem;
+    }
+    .btn-rol {
+      background-color: #475569;
+      color: white;
+      border: none;
+    }
+    .btn-rol:hover {
+      background-color: #1e293b;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-4">
+    <div class="header-section">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h3 class="mb-0">📋 Gestión de Altas y Egresos</h3>
+          <p class="mb-0">Hospital Clínico Herminda Martín — Chillán</p>
+        </div>
+        <div>
+          <a href="{% url 'registrar_alta' %}" class="btn btn-light me-2">➕ Nueva Alta</a>
+          <a href="{% url 'dashboard_admin' %}" class="btn btn-outline-light">Volver</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <form method="get" class="row g-3">
+          <div class="col-md-3">
+            <label class="form-label">Estado Episodio</label>
+            <select name="estado" class="form-select">
+              <option value="">Todos</option>
+              <option value="abierto" {% if estado_filter == 'abierto' %}selected{% endif %}>Abierto</option>
+              <option value="cerrado" {% if estado_filter == 'cerrado' %}selected{% endif %}>Cerrado</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Tipo de Alta</label>
+            <select name="tipo_alta" class="form-select">
+              <option value="">Todos</option>
+              <option value="alta_medica" {% if tipo_alta_filter == 'alta_medica' %}selected{% endif %}>Alta Médica</option>
+              <option value="alta_voluntaria" {% if tipo_alta_filter == 'alta_voluntaria' %}selected{% endif %}>Alta Voluntaria</option>
+              <option value="traslado" {% if tipo_alta_filter == 'traslado' %}selected{% endif %}>Traslado</option>
+              <option value="fallecimiento" {% if tipo_alta_filter == 'fallecimiento' %}selected{% endif %}>Fallecimiento</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Fecha Desde</label>
+            <input type="date" name="fecha_desde" class="form-control" value="{{ fecha_desde }}">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Fecha Hasta</label>
+            <input type="date" name="fecha_hasta" class="form-control" value="{{ fecha_hasta }}">
+          </div>
+          <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-rol w-100">Filtrar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Lista de Altas -->
+    <div class="card">
+      <div class="card-header bg-dark text-white">
+        <h5 class="mb-0">Lista de Altas y Egresos ({{ altas.count }})</h5>
+      </div>
+      <div class="card-body">
+        {% if altas %}
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Fecha Alta</th>
+                  <th>Paciente</th>
+                  <th>Tipo Alta</th>
+                  <th>Estado Episodio</th>
+                  <th>Documentos</th>
+                  <th>Trámites</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for alta in altas %}
+                <tr>
+                  <td>{{ alta.fecha_alta|date:"d/m/Y H:i" }}</td>
+                  <td><strong>{{ alta.paciente.nombre }}</strong></td>
+                  <td>{{ alta.get_tipo_alta_display }}</td>
+                  <td>
+                    {% if alta.estado_episodio == 'cerrado' %}
+                      <span class="badge bg-success">Cerrado</span>
+                    {% else %}
+                      <span class="badge bg-warning">Abierto</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if alta.documento_alta_entregado %}
+                      <span class="badge bg-success">✓</span>
+                    {% else %}
+                      <span class="badge bg-danger">✗</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if alta.pagos_completados and alta.facturacion_cerrada %}
+                      <span class="badge bg-success">Completado</span>
+                    {% else %}
+                      <span class="badge bg-warning">Pendiente</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <a href="{% url 'detalle_alta_egreso' alta.id %}" class="btn btn-sm btn-outline-primary">Ver Detalle</a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="alert alert-info">
+            No hay altas registradas. <a href="{% url 'registrar_alta' %}" class="alert-link">Registrar primera alta</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+

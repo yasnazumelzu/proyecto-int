@@ -1,0 +1,178 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registrar Alta — Administrativo</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f4f7fa;
+      font-family: "Segoe UI", sans-serif;
+    }
+    .form-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      max-width: 1000px;
+      margin: 2rem auto;
+    }
+    .header-section {
+      background-color: #334155;
+      color: white;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+    }
+    .btn-rol {
+      background-color: #475569;
+      color: white;
+      border: none;
+    }
+    .btn-rol:hover {
+      background-color: #1e293b;
+      color: white;
+    }
+    .section-title {
+      color: #334155;
+      border-bottom: 2px solid #334155;
+      padding-bottom: 0.5rem;
+      margin: 1.5rem 0 1rem 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="form-container">
+      <div class="header-section">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h4 class="mb-0">📋 Registrar Alta y Egreso</h4>
+            <p class="mb-0">Hospital Clínico Herminda Martín — Chillán</p>
+          </div>
+          <div>
+            <a href="{% url 'lista_altas_egresos' %}" class="btn btn-outline-light">Volver</a>
+          </div>
+        </div>
+      </div>
+
+      {% if admision %}
+      <div class="alert alert-info">
+        <strong>Admisión:</strong> {{ admision.paciente.nombre }} - {{ admision.get_tipo_admision_display }} - {{ admision.fecha_admision|date:"d/m/Y" }}
+      </div>
+      {% endif %}
+
+      <form method="POST">
+        {% csrf_token %}
+        
+        <h5 class="section-title">Información Básica</h5>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label">{{ form.admision.label }} *</label>
+            {{ form.admision }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">{{ form.paciente.label }} *</label>
+            {{ form.paciente }}
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label">{{ form.tipo_alta.label }} *</label>
+            {{ form.tipo_alta }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">{{ form.estado_episodio.label }}</label>
+            {{ form.estado_episodio }}
+          </div>
+        </div>
+
+        <h5 class="section-title">Documentos Entregados</h5>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <div class="form-check">
+              {{ form.documento_alta_entregado }}
+              <label class="form-check-label">{{ form.documento_alta_entregado.label }}</label>
+            </div>
+            <div class="form-check">
+              {{ form.certificado_defuncion_entregado }}
+              <label class="form-check-label">{{ form.certificado_defuncion_entregado.label }}</label>
+            </div>
+            <div class="form-check">
+              {{ form.informe_medico_entregado }}
+              <label class="form-check-label">{{ form.informe_medico_entregado.label }}</label>
+            </div>
+            <div class="form-check">
+              {{ form.recetas_entregadas }}
+              <label class="form-check-label">{{ form.recetas_entregadas.label }}</label>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">{{ form.fecha_entrega_documentos.label }}</label>
+            {{ form.fecha_entrega_documentos }}
+            <label class="form-label mt-2">{{ form.persona_que_recibio.label }}</label>
+            {{ form.persona_que_recibio }}
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <label class="form-label">{{ form.otros_documentos.label }}</label>
+            {{ form.otros_documentos }}
+          </div>
+        </div>
+
+        <h5 class="section-title">Trámites Administrativos</h5>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <div class="form-check">
+              {{ form.pagos_completados }}
+              <label class="form-check-label">{{ form.pagos_completados.label }}</label>
+            </div>
+            <div class="form-check">
+              {{ form.facturacion_cerrada }}
+              <label class="form-check-label">{{ form.facturacion_cerrada.label }}</label>
+            </div>
+            <div class="form-check">
+              {{ form.habitacion_liberada }}
+              <label class="form-check-label">{{ form.habitacion_liberada.label }}</label>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-check">
+              {{ form.expediente_clinico_archivado }}
+              <label class="form-check-label">{{ form.expediente_clinico_archivado.label }}</label>
+            </div>
+            <div class="form-check">
+              {{ form.notificaciones_enviadas }}
+              <label class="form-check-label">{{ form.notificaciones_enviadas.label }}</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <label class="form-label">{{ form.tramites_adicionales.label }}</label>
+            {{ form.tramites_adicionales }}
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <label class="form-label">{{ form.observaciones.label }}</label>
+            {{ form.observaciones }}
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+          <a href="{% url 'lista_altas_egresos' %}" class="btn btn-secondary">Cancelar</a>
+          <button type="submit" class="btn btn-rol">Registrar Alta</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
+

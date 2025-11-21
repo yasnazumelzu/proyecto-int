@@ -1,0 +1,179 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Detalle Paciente — Enfermería</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f3fcf6;
+      font-family: "Segoe UI", sans-serif;
+    }
+    .header-section {
+      background-color: #198754;
+      color: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      margin-bottom: 2rem;
+    }
+    .btn-rol {
+      background-color: #198754;
+      color: white;
+      border: none;
+    }
+    .btn-rol:hover {
+      background-color: #126c43;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-4">
+    <div class="header-section">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h3 class="mb-0">👤 Detalle del Paciente: {{ paciente.nombre }}</h3>
+          <p class="mb-0">Hospital Clínico Herminda Martín — Chillán</p>
+        </div>
+        <div>
+          <a href="{% url 'consultar_pacientes' %}" class="btn btn-outline-light">Volver</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Información del Paciente -->
+    <div class="card mb-4">
+      <div class="card-header bg-success text-white">
+        <h5 class="mb-0">Información del Paciente</h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <p><strong>Nombre:</strong> {{ paciente.nombre }}</p>
+            <p><strong>RUT:</strong> {{ paciente.rut }}</p>
+            <p><strong>Edad:</strong> {{ paciente.edad }} años</p>
+          </div>
+          <div class="col-md-6">
+            <p><strong>Diagnóstico:</strong> {{ paciente.diagnostico }}</p>
+            <p><strong>Fecha de Ingreso:</strong> {{ paciente.fecha_ingreso|date:"d/m/Y" }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Historial de Controles -->
+    <div class="card">
+      <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Historial de Controles ({{ controles.count }})</h5>
+        <a href="{% url 'registrar_control' %}?paciente={{ paciente.id }}" class="btn btn-light btn-sm">➕ Nuevo Control</a>
+      </div>
+      <div class="card-body">
+        {% if controles %}
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Fecha y Hora</th>
+                  <th>Presión Arterial</th>
+                  <th>FC</th>
+                  <th>FR</th>
+                  <th>Temperatura</th>
+                  <th>SpO2</th>
+                  <th>Peso</th>
+                  <th>Alertas</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for control in controles %}
+                <tr {% if control.alertas %}class="table-warning"{% endif %}>
+                  <td>{{ control.fecha_control|date:"d/m/Y H:i" }}</td>
+                  <td>
+                    {% if control.presion_arterial_sistolica and control.presion_arterial_diastolica %}
+                      {{ control.presion_arterial_sistolica }}/{{ control.presion_arterial_diastolica }}
+                    {% else %}
+                      -
+                    {% endif %}
+                  </td>
+                  <td>{{ control.frecuencia_cardiaca|default:"-" }}</td>
+                  <td>{{ control.frecuencia_respiratoria|default:"-" }}</td>
+                  <td>{{ control.temperatura|default:"-" }} {% if control.temperatura %}°C{% endif %}</td>
+                  <td>{{ control.saturacion_oxigeno|default:"-" }} {% if control.saturacion_oxigeno %}%{% endif %}</td>
+                  <td>{{ control.peso|default:"-" }} {% if control.peso %}kg{% endif %}</td>
+                  <td>
+                    {% if control.alertas %}
+                      <span class="badge bg-danger">⚠️ Alerta</span>
+                    {% else %}
+                      <span class="badge bg-success">Normal</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalControl{{ control.id }}">
+                      Ver Detalle
+                    </button>
+                  </td>
+                </tr>
+                
+                <!-- Modal para ver detalles del control -->
+                <div class="modal fade" id="modalControl{{ control.id }}" tabindex="-1">
+                  <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                      <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title">Control del {{ control.fecha_control|date:"d/m/Y H:i" }}</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body">
+                        <h6>Signos Vitales</h6>
+                        <p><strong>Presión Arterial:</strong> 
+                          {% if control.presion_arterial_sistolica and control.presion_arterial_diastolica %}
+                            {{ control.presion_arterial_sistolica }}/{{ control.presion_arterial_diastolica }} mmHg
+                          {% else %}
+                            No registrado
+                          {% endif %}
+                        </p>
+                        <p><strong>Frecuencia Cardíaca:</strong> {{ control.frecuencia_cardiaca|default:"No registrado" }} lpm</p>
+                        <p><strong>Frecuencia Respiratoria:</strong> {{ control.frecuencia_respiratoria|default:"No registrado" }} rpm</p>
+                        <p><strong>Temperatura:</strong> {{ control.temperatura|default:"No registrado" }} {% if control.temperatura %}°C{% endif %}</p>
+                        <p><strong>Saturación de Oxígeno:</strong> {{ control.saturacion_oxigeno|default:"No registrado" }} {% if control.saturacion_oxigeno %}%{% endif %}</p>
+                        <p><strong>Peso:</strong> {{ control.peso|default:"No registrado" }} {% if control.peso %}kg{% endif %}</p>
+                        
+                        {% if control.observaciones %}
+                        <h6 class="mt-3">Observaciones</h6>
+                        <p>{{ control.observaciones }}</p>
+                        {% endif %}
+                        
+                        {% if control.medicamentos_administrados %}
+                        <h6 class="mt-3">Medicamentos Administrados</h6>
+                        <p>{{ control.medicamentos_administrados }}</p>
+                        {% endif %}
+                        
+                        {% if control.alertas and control.motivo_alerta %}
+                        <h6 class="mt-3 text-danger">⚠️ Alerta</h6>
+                        <p>{{ control.motivo_alerta }}</p>
+                        {% endif %}
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="alert alert-info">
+            Este paciente no tiene controles registrados. 
+            <a href="{% url 'registrar_control' %}?paciente={{ paciente.id }}" class="alert-link">Registrar primer control</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

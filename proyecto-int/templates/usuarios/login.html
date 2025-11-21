@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Hospital Clínico Herminda Martín</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #0b4a91;
+      font-family: "Segoe UI", sans-serif;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+    }
+
+    .login-card {
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      width: 400px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+    }
+
+    .login-card img {
+      width: 90px;
+      margin-bottom: 15px;
+    }
+
+    .login-card h4 {
+      color: #003366;
+      font-weight: bold;
+    }
+
+    .login-card small {
+      color: #666;
+      font-size: 0.9rem;
+      display: block;
+      margin-bottom: 20px;
+    }
+
+    .form-control {
+      border-radius: 8px;
+    }
+
+    .btn-primary {
+      background-color: #003366;
+      border: none;
+      font-weight: 500;
+    }
+
+    .btn-primary:hover {
+      background-color: #00274d;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="login-card">
+    <img src="{% static 'imagenes/log_herminda.jpeg' %}" alt="Logo Herminda">
+    <h4>Hospital Clínico Herminda Martín</h4>
+    <small>Sistema de Ginecobstetricia y Recién Nacido</small>
+
+    <form method="post">
+      {% csrf_token %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} mt-2">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <div class="mb-3 text-start">
+        <label for="username" class="form-label">Usuario</label>
+        <input type="text" name="username" class="form-control" placeholder="Ingrese su usuario" required>
+      </div>
+
+      <div class="mb-3 text-start">
+        <label for="password" class="form-label">Contraseña</label>
+        <input type="password" name="password" class="form-control" placeholder="Ingrese su contraseña" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100">Iniciar sesión</button>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,236 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel Administrador — Hospital Clínico Herminda Martín</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #f4f7fa;
+      font-family: "Segoe UI", sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background-color: #334155; /* Gris azulado profesional */
+      color: white;
+      padding: 15px 25px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    header img {
+      height: 60px;
+      margin-right: 10px;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      margin: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    h1 span {
+      font-size: 1rem;
+      display: block;
+      color: #cbd5e1;
+      font-weight: normal;
+    }
+
+    .stat-card {
+      background: white;
+      border-left: 6px solid #334155;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: transform 0.2s ease-in-out;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .btn-rol {
+      background-color: #475569;
+      color: white;
+      border-radius: 8px;
+      border: none;
+      transition: 0.3s;
+      padding: 10px 20px;
+      font-weight: 500;
+    }
+
+    .btn-rol:hover {
+      background-color: #1e293b;
+    }
+
+    footer {
+      background-color: #1e293b;
+      color: white;
+      text-align: center;
+      padding: 15px 0;
+      width: 100%;
+      font-size: 14px;
+      margin-top: auto;
+      border-top: 3px solid #334155;
+    }
+
+    footer small {
+      color: #94a3b8;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ENCABEZADO -->
+  <header>
+    <div class="d-flex align-items-center">
+      <img src="{% static 'imagenes/logo_oficial.jpeg' %}" alt="Logo Hospital">
+      <div>
+        <h1>Panel Administrador</h1>
+        <span>Hospital Clínico Herminda Martín — Chillán</span>
+      </div>
+    </div>
+    <a href="{% url 'logout' %}" class="btn btn-outline-light">Cerrar Sesión</a>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="container mt-4 mb-5">
+    <div class="alert alert-secondary shadow-sm text-center fw-semibold">
+      Bienvenido(a), {{ request.user.username|capfirst }} 🧑‍💼  
+      <br>Panel de administración y gestión del sistema hospitalario.
+    </div>
+
+    <!-- Indicadores de Admisiones -->
+    <div class="row mb-4">
+      <div class="col-md-3 mb-3">
+        <div class="stat-card">
+          <h4 class="fw-bold">{{ total_admisiones|default:0 }}</h4>
+          <p>Total Admisiones</p>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="stat-card">
+          <h4 class="fw-bold">{{ admisiones_pendientes|default:0 }}</h4>
+          <p>Admisiones Pendientes</p>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="stat-card">
+          <h4 class="fw-bold">{{ admisiones_hoy|default:0 }}</h4>
+          <p>Admisiones Hoy</p>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="stat-card">
+          <h4 class="fw-bold">{{ total_pagos|default:0 }}</h4>
+          <p>Total Pagos</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Indicadores de Pagos -->
+    <div class="row mb-4">
+      <div class="col-md-3 mb-3">
+        <div class="stat-card">
+          <h4 class="fw-bold">{{ pagos_pendientes|default:0 }}</h4>
+          <p>Pagos Pendientes</p>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="stat-card">
+          <h4 class="fw-bold">${{ monto_total_pendiente|floatformat:0|default:0 }}</h4>
+          <p>Monto Pendiente</p>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="stat-card">
+          <h4 class="fw-bold">${{ monto_total_pagado_hoy|floatformat:0|default:0 }}</h4>
+          <p>Pagado Hoy</p>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="stat-card">
+          <h4 class="fw-bold">{{ pacientes.count }}</h4>
+          <p>Pacientes Registrados</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Acciones principales - Admisiones -->
+    <div class="row mb-4">
+      <div class="col-md-6 mb-4">
+        <div class="card p-4 shadow-sm border-0">
+          <h5 class="fw-bold text-dark">🏥 Gestión de Admisiones</h5>
+          <p>Ver todas las admisiones, crear nuevas admisiones y gestionar el proceso de ingreso de pacientes.</p>
+          <div class="d-flex gap-2 mt-3">
+            <a href="{% url 'lista_admisiones' %}" class="btn btn-rol flex-fill">Ver Admisiones</a>
+            <a href="{% url 'nueva_admision' %}" class="btn btn-outline-secondary flex-fill">Nueva Admisión</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 mb-4">
+        <div class="card p-4 shadow-sm border-0">
+          <h5 class="fw-bold text-dark">💰 Gestión de Pagos</h5>
+          <p>Ver todos los pagos, registrar nuevos pagos y gestionar el proceso de facturación y cobranza.</p>
+          <div class="d-flex gap-2 mt-3">
+            <a href="{% url 'lista_pagos' %}" class="btn btn-rol flex-fill">Ver Pagos</a>
+            <a href="{% url 'nuevo_pago' %}" class="btn btn-outline-secondary flex-fill">Nuevo Pago</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gestión de Altas y Egresos -->
+    <div class="row mb-4">
+      <div class="col-md-6 mb-4">
+        <div class="card p-4 shadow-sm border-0">
+          <h5 class="fw-bold text-dark">📋 Gestión de Altas y Egresos</h5>
+          <p>Registrar altas, cerrar episodios, entregar documentos y realizar trámites administrativos.</p>
+          <div class="d-flex gap-2 mt-3">
+            <a href="{% url 'lista_altas_egresos' %}" class="btn btn-rol flex-fill">Ver Altas</a>
+            <a href="{% url 'registrar_alta' %}" class="btn btn-outline-secondary flex-fill">Nueva Alta</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 mb-4">
+        <div class="card p-4 shadow-sm border-0">
+          <h5 class="fw-bold text-dark">📊 Revisar Reportes Generales</h5>
+          <p>Ver estadísticas y actividad global del sistema hospitalario.</p>
+          <a href="{% url 'reportes_generales' %}" class="btn btn-rol w-100">Ver Reportes</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Accesos directos a roles -->
+    <div class="card mt-4 shadow-sm p-4">
+      <h5 class="fw-bold text-dark mb-3">Accesos Directos por Rol</h5>
+      <div class="d-flex flex-wrap gap-3">
+        <a href="{% url 'dashboard_medico' %}" class="btn btn-outline-primary flex-fill">Médico</a>
+        <a href="{% url 'dashboard_matrona' %}" class="btn btn-outline-danger flex-fill">Matrona</a>
+        <a href="{% url 'dashboard_enfermero' %}" class="btn btn-outline-success flex-fill">Enfermería</a>
+        <a href="{% url 'dashboard_admin' %}" class="btn btn-outline-warning flex-fill">Administrativo</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- PIE DE PÁGINA -->
+  <footer>
+    © 2025 Hospital Clínico Herminda Martín — Chillán  
+    <br><small>Ministerio de Salud — Gobierno de Chile</small>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Hospital Clínico Herminda Martín — Sistema Hospitalario{% endblock %}
+
+{% block content %}
+<style>
+  body {
+    background-color: #0b4a91;
+    font-family: "Segoe UI", sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+  }
+
+  .inicio-card {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    width: 420px;
+    text-align: center;
+    padding: 2.5rem 2rem;
+  }
+
+  .inicio-card img {
+    width: 90px;
+    margin-bottom: 15px;
+  }
+
+  .inicio-card h1 {
+    color: #003366;
+    font-weight: bold;
+    font-size: 1.4rem;
+    margin-bottom: 5px;
+  }
+
+  .inicio-card small {
+    color: #666;
+    display: block;
+    margin-bottom: 20px;
+  }
+
+  .inicio-card p {
+    color: #444;
+    font-size: 0.95rem;
+  }
+
+  .btn-iniciar {
+    background-color: #003366;
+    color: #fff;
+    border: none;
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: 0.3s;
+  }
+
+  .btn-iniciar:hover {
+    background-color: #00264d;
+  }
+
+  footer {
+    background-color: #003366;
+    color: white;
+    font-size: 0.9rem;
+    margin-top: 25px;
+    text-align: center;
+    padding: 12px 0;
+    font-size: 14px;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+  }
+
+  footer small {
+    display: block;
+    font-size: 12px;
+  }
+</style>
+
+<div class="inicio-card">
+  <img src="{% static 'imagen/logo_oficial.png' %}" alt="Logo Hospital">
+  <h1>Hospital Clínico Herminda Martín</h1>
+  <small>Sistema de Ginecobstetricia y Recién Nacido</small>
+
+  <p>Bienvenida(o) al Sistema Hospitalario.  
+  Gestione los registros del área de obstetricia de manera segura y centralizada.</p>
+
+  <a href="{% url 'login' %}" class="btn btn-iniciar mt-3">Iniciar sesión</a>
+</div>
+
+<footer>
+  © 2025 Hospital Clínico Herminda Martín — Chillán<br>
+  <small>Ministerio de Salud — Gobierno de Chile</small>
+</footer>
+{% endblock %}

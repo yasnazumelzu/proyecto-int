@@ -1,0 +1,93 @@
+{% load static %}
+<style>
+  .sidebar {
+    width: 250px;
+    height: 100vh;
+    background: var(--color-rol, #334155); /* color por defecto (gris azulado) */
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 1rem;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+    z-index: 1000;
+  }
+
+  .sidebar-header {
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+    padding-bottom: 1rem;
+  }
+
+  .sidebar-header img {
+    height: 70px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+
+  .sidebar h4 {
+    font-size: 1.1rem;
+    margin: 0;
+  }
+
+  .sidebar-nav {
+    flex-grow: 1;
+    padding: 1rem 0;
+  }
+
+  .sidebar-nav a {
+    display: block;
+    padding: 10px 20px;
+    color: white;
+    text-decoration: none;
+    transition: background 0.3s;
+    font-weight: 500;
+  }
+
+  .sidebar-nav a:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .sidebar-footer {
+    text-align: center;
+    padding: 15px;
+    border-top: 1px solid rgba(255,255,255,0.3);
+    font-size: 13px;
+  }
+
+  main {
+    margin-left: 250px;
+    padding: 2rem;
+  }
+
+  /* Colores por rol */
+  body.matrona .sidebar { --color-rol: #a62639; }
+  body.enfermero .sidebar { --color-rol: #198754; }
+  body.medico .sidebar { --color-rol: #0d6efd; }
+  body.administrativo .sidebar { --color-rol: #fd7e14; }
+  body.admin .sidebar { --color-rol: #334155; }
+</style>
+
+<div class="sidebar">
+  <div class="sidebar-header">
+    <img src="{% static 'imagenes/log_herminda.jpeg' %}" alt="Logo Herminda">
+    <h4>Hospital H. Martín</h4>
+    <small>Chillán</small>
+  </div>
+
+  <div class="sidebar-nav">
+    <a href="{% url 'inicio' %}">🏠 Inicio</a>
+    {% if request.resolver_match.url_name == 'dashboard_matrona' or request.resolver_match.url_name == 'registrar_nacimiento' or request.resolver_match.url_name == 'seguimiento_materno' %}
+    <a href="{% url 'registrar_nacimiento' %}">📋 Formularios</a>
+    <a href="{% url 'seguimiento_materno' %}">📊 Reportes</a>
+    {% endif %}
+    <a href="{% url 'lista_pacientes' %}">👥 Pacientes</a>
+    <a href="{% url 'logout' %}">🚪 Cerrar Sesión</a>
+  </div>
+
+  <div class="sidebar-footer">
+    <p>© 2025 HCHM<br><small>Ministerio de Salud</small></p>
+  </div>
+</div>

@@ -1,0 +1,184 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel Pediatra — Hospital Clínico Herminda Martín</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #fff5f5;
+      font-family: "Segoe UI", sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background-color: #e91e63;
+      color: white;
+      padding: 15px 25px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    .stat-card {
+      background: white;
+      border-left: 6px solid #e91e63;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: transform 0.2s ease-in-out;
+    }
+    .stat-card:hover {
+      transform: translateY(-4px);
+    }
+    .btn-rol {
+      background-color: #e91e63;
+      color: white;
+      border-radius: 8px;
+      border: none;
+      transition: 0.3s;
+      padding: 10px 20px;
+      font-weight: 500;
+    }
+    .btn-rol:hover {
+      background-color: #c2185b;
+      color: white;
+    }
+    footer {
+      background-color: #880e4f;
+      color: white;
+      text-align: center;
+      padding: 15px 0;
+      width: 100%;
+      font-size: 14px;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="d-flex align-items-center">
+      <img src="{% static 'imagenes/logo_oficial.jpeg' %}" alt="Logo Hospital" height="60">
+      <div class="ms-3">
+        <h1 class="mb-0">Panel Pediatra</h1>
+        <span>Hospital Clínico Herminda Martín — Chillán</span>
+      </div>
+    </div>
+    <a href="{% url 'logout' %}" class="btn btn-outline-light">Cerrar Sesión</a>
+  </header>
+
+  <main class="container mt-4 mb-5">
+    <div class="alert alert-danger shadow-sm text-center fw-semibold">
+      Bienvenido(a), {{ request.user.username|capfirst }} 👶  
+      <br>Acceso al sistema de atención pediátrica y gestión de recién nacidos.
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="row mb-4">
+      <div class="col-md-3 mb-3">
+        <div class="stat-card">
+          <h4 class="fw-bold">{{ total_recien_nacidos|default:0 }}</h4>
+          <p>Total Recién Nacidos</p>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="stat-card">
+          <h4 class="fw-bold">{{ recien_nacidos_sin_alta|default:0 }}</h4>
+          <p>Sin Alta Registrada</p>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="stat-card">
+          <h4 class="fw-bold">{{ altas_registradas|default:0 }}</h4>
+          <p>Altas Registradas</p>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="stat-card">
+          <h4 class="fw-bold">{{ recien_nacidos_hoy|default:0 }}</h4>
+          <p>Nacidos Hoy</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Acciones principales -->
+    <div class="row mb-4">
+      <div class="col-md-6 mb-4">
+        <div class="card p-4 shadow-sm border-0">
+          <h5 class="fw-bold text-dark">👶 Ver Recién Nacidos</h5>
+          <p>Consultar información de recién nacidos y su estado actual.</p>
+          <a href="{% url 'lista_recien_nacidos' %}" class="btn btn-rol w-100 mt-3">Ver Recién Nacidos</a>
+        </div>
+      </div>
+
+      <div class="col-md-6 mb-4">
+        <div class="card p-4 shadow-sm border-0">
+          <h5 class="fw-bold text-dark">📋 Registrar Alta de Recién Nacido</h5>
+          <p>Registrar el alta médica de un recién nacido con toda la información necesaria.</p>
+          <a href="{% url 'registrar_alta_recien_nacido' %}" class="btn btn-rol w-100 mt-3">Registrar Alta</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-4">
+      <div class="col-md-6 mb-4">
+        <div class="card p-4 shadow-sm border-0">
+          <h5 class="fw-bold text-dark">📊 Ver Altas Registradas</h5>
+          <p>Consultar el historial de altas de recién nacidos registradas.</p>
+          <a href="{% url 'lista_altas_recien_nacidos' %}" class="btn btn-rol w-100 mt-3">Ver Altas</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recién nacidos recientes -->
+    {% if recien_nacidos_recientes %}
+    <div class="card shadow-sm">
+      <div class="card-header bg-danger text-white">
+        <h5 class="mb-0">Recién Nacidos Recientes (Sin Alta)</h5>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Madre</th>
+                <th>Fecha Nacimiento</th>
+                <th>Peso</th>
+                <th>Sexo</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for rn in recien_nacidos_recientes %}
+              <tr>
+                <td><strong>{{ rn.nombre }} {{ rn.apellido_paterno|default:'' }}</strong></td>
+                <td>{{ rn.paciente_madre.nombre }}</td>
+                <td>{{ rn.fecha_nacimiento|date:"d/m/Y" }}</td>
+                <td>{{ rn.peso }} g</td>
+                <td>{% if rn.sexo %}{{ rn.get_sexo_display }}{% else %}-{% endif %}</td>
+                <td>
+                  <a href="{% url 'detalle_recien_nacido' rn.id %}" class="btn btn-sm btn-outline-primary">Ver Detalle</a>
+                  <a href="{% url 'registrar_alta_recien_nacido_id' rn.id %}" class="btn btn-sm btn-rol">Registrar Alta</a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </main>
+
+  <footer>
+    © 2025 Hospital Clínico Herminda Martín — Chillán  
+    <br><small>Ministerio de Salud — Gobierno de Chile</small>
+  </footer>
+</body>
+</html>
+

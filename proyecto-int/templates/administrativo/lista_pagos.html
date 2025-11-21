@@ -1,0 +1,166 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Pagos — Hospital Clínico Herminda Martín</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f4f7fa;
+      font-family: "Segoe UI", sans-serif;
+    }
+    .header-section {
+      background-color: #334155;
+      color: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      margin-bottom: 2rem;
+    }
+    .btn-rol {
+      background-color: #475569;
+      color: white;
+      border: none;
+    }
+    .btn-rol:hover {
+      background-color: #1e293b;
+      color: white;
+    }
+    .stat-box {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      border-left: 4px solid #334155;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-4">
+    <div class="header-section">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h3 class="mb-0">💰 Gestión de Pagos</h3>
+          <p class="mb-0">Hospital Clínico Herminda Martín — Chillán</p>
+        </div>
+        <div>
+          <a href="{% url 'dashboard_admin' %}" class="btn btn-outline-light me-2">Volver</a>
+          <a href="{% url 'nuevo_pago' %}" class="btn btn-light">Nuevo Pago</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <div class="stat-box">
+          <h5 class="text-success mb-0">Total Pagado: ${{ total_pagado|floatformat:0 }}</h5>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="stat-box">
+          <h5 class="text-danger mb-0">Total Pendiente: ${{ total_pendiente|floatformat:0 }}</h5>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <form method="get" class="row g-3">
+          <div class="col-md-3">
+            <label class="form-label">Estado</label>
+            <select name="estado" class="form-select">
+              <option value="">Todos</option>
+              <option value="pendiente" {% if estado_filter == 'pendiente' %}selected{% endif %}>Pendiente</option>
+              <option value="pagado" {% if estado_filter == 'pagado' %}selected{% endif %}>Pagado</option>
+              <option value="parcial" {% if estado_filter == 'parcial' %}selected{% endif %}>Pago Parcial</option>
+              <option value="cancelado" {% if estado_filter == 'cancelado' %}selected{% endif %}>Cancelado</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Método de Pago</label>
+            <select name="metodo" class="form-select">
+              <option value="">Todos</option>
+              <option value="efectivo" {% if metodo_filter == 'efectivo' %}selected{% endif %}>Efectivo</option>
+              <option value="tarjeta_debito" {% if metodo_filter == 'tarjeta_debito' %}selected{% endif %}>Tarjeta Débito</option>
+              <option value="tarjeta_credito" {% if metodo_filter == 'tarjeta_credito' %}selected{% endif %}>Tarjeta Crédito</option>
+              <option value="transferencia" {% if metodo_filter == 'transferencia' %}selected{% endif %}>Transferencia</option>
+              <option value="fonasa" {% if metodo_filter == 'fonasa' %}selected{% endif %}>FONASA</option>
+              <option value="isapre" {% if metodo_filter == 'isapre' %}selected{% endif %}>ISAPRE</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Desde</label>
+            <input type="date" name="fecha_desde" class="form-control" value="{{ fecha_desde }}">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Hasta</label>
+            <input type="date" name="fecha_hasta" class="form-control" value="{{ fecha_hasta }}">
+          </div>
+          <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-rol w-100">Filtrar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Tabla de Pagos -->
+    <div class="card">
+      <div class="card-header bg-dark text-white">
+        <h5 class="mb-0">Lista de Pagos ({{ pagos.count }})</h5>
+      </div>
+      <div class="card-body">
+        {% if pagos %}
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Paciente</th>
+                  <th>Fecha Pago</th>
+                  <th>Monto Total</th>
+                  <th>Monto Pagado</th>
+                  <th>Pendiente</th>
+                  <th>Método</th>
+                  <th>Estado</th>
+                  <th>Concepto</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for pago in pagos %}
+                <tr>
+                  <td>{{ pago.id }}</td>
+                  <td>{{ pago.paciente.nombre }}<br><small class="text-muted">{{ pago.paciente.rut }}</small></td>
+                  <td>{{ pago.fecha_pago|date:"d/m/Y H:i" }}</td>
+                  <td class="fw-bold">${{ pago.monto_total|floatformat:0 }}</td>
+                  <td class="text-success">${{ pago.monto_pagado|floatformat:0 }}</td>
+                  <td class="text-danger">${{ pago.monto_pendiente|floatformat:0 }}</td>
+                  <td>{{ pago.get_metodo_pago_display|default:"-" }}</td>
+                  <td>
+                    {% if pago.estado == 'pagado' %}
+                      <span class="badge bg-success">{{ pago.get_estado_display }}</span>
+                    {% elif pago.estado == 'pendiente' %}
+                      <span class="badge bg-warning">{{ pago.get_estado_display }}</span>
+                    {% elif pago.estado == 'parcial' %}
+                      <span class="badge bg-info">{{ pago.get_estado_display }}</span>
+                    {% else %}
+                      <span class="badge bg-danger">{{ pago.get_estado_display }}</span>
+                    {% endif %}
+                  </td>
+                  <td>{{ pago.concepto|truncatewords:5 }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="alert alert-info">
+            No hay pagos registrados. <a href="{% url 'nuevo_pago' %}">Registrar primer pago</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+

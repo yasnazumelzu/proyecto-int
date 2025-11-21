@@ -1,0 +1,240 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel Administrador TI — Hospital Clínico Herminda Martín</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f4f7fa;
+      font-family: "Segoe UI", sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background-color: #1e293b;
+      color: white;
+      padding: 15px 25px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    .stat-card {
+      background: white;
+      border-left: 6px solid #1e293b;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: transform 0.2s ease-in-out;
+    }
+    .stat-card:hover {
+      transform: translateY(-4px);
+    }
+    .btn-ti {
+      background-color: #1e293b;
+      color: white;
+      border-radius: 8px;
+      border: none;
+      transition: 0.3s;
+      padding: 10px 20px;
+      font-weight: 500;
+    }
+    .btn-ti:hover {
+      background-color: #0f172a;
+      color: white;
+    }
+    footer {
+      background-color: #0f172a;
+      color: white;
+      text-align: center;
+      padding: 15px 0;
+      width: 100%;
+      font-size: 14px;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="d-flex align-items-center">
+      <img src="{% static 'imagenes/logo_oficial.jpeg' %}" alt="Logo Hospital" height="60">
+      <div class="ms-3">
+        <h1 class="mb-0">Panel Administrador TI</h1>
+        <span>Hospital Clínico Herminda Martín — Chillán</span>
+      </div>
+    </div>
+    <a href="{% url 'logout' %}" class="btn btn-outline-light">Cerrar Sesión</a>
+  </header>
+
+  <main class="container mt-4 mb-5">
+    <div class="alert alert-dark shadow-sm text-center fw-semibold">
+      Bienvenido(a), {{ request.user.username|capfirst }} 💻  
+      <br>Panel de administración técnica y gestión del sistema.
+    </div>
+
+    <!-- Estadísticas de Usuarios -->
+    <div class="row mb-4">
+      <div class="col-md-3 mb-3">
+        <div class="stat-card">
+          <h4 class="fw-bold">{{ total_usuarios }}</h4>
+          <p>Total Usuarios</p>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="stat-card">
+          <h4 class="fw-bold">{{ usuarios_activos }}</h4>
+          <p>Usuarios Activos</p>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="stat-card">
+          <h4 class="fw-bold">{{ usuarios_inactivos }}</h4>
+          <p>Usuarios Inactivos</p>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="stat-card">
+          <h4 class="fw-bold">{{ sesiones_activas }}</h4>
+          <p>Sesiones Activas</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estadísticas del Sistema -->
+    <div class="row mb-4">
+      <div class="col-md-3 mb-3">
+        <div class="stat-card">
+          <h4 class="fw-bold">{{ total_grupos }}</h4>
+          <p>Grupos Configurados</p>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="stat-card">
+          <h4 class="fw-bold">{{ total_pacientes }}</h4>
+          <p>Pacientes Registrados</p>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="stat-card">
+          <h4 class="fw-bold">{{ total_recien_nacidos }}</h4>
+          <p>Recién Nacidos</p>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="stat-card">
+          <h4 class="fw-bold">{{ usuarios_recientes }}</h4>
+          <p>Usuarios Nuevos (30 días)</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Acciones principales -->
+    <div class="row mb-4">
+      <div class="col-md-6 mb-4">
+        <div class="card p-4 shadow-sm border-0">
+          <h5 class="fw-bold text-dark">👥 Gestión de Usuarios</h5>
+          <p>Crear, editar, eliminar y gestionar usuarios del sistema.</p>
+          <div class="d-flex gap-2 mt-3">
+            <a href="{% url 'lista_usuarios' %}" class="btn btn-ti flex-fill">Ver Usuarios</a>
+            <a href="{% url 'crear_usuario' %}" class="btn btn-outline-secondary flex-fill">Nuevo Usuario</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 mb-4">
+        <div class="card p-4 shadow-sm border-0">
+          <h5 class="fw-bold text-dark">👥 Gestión de Grupos</h5>
+          <p>Administrar grupos y permisos del sistema.</p>
+          <div class="d-flex gap-2 mt-3">
+            <a href="{% url 'lista_grupos' %}" class="btn btn-ti flex-fill">Ver Grupos</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-4">
+      <div class="col-md-6 mb-4">
+        <div class="card p-4 shadow-sm border-0">
+          <h5 class="fw-bold text-dark">🔐 Sesiones Activas</h5>
+          <p>Monitorear y gestionar sesiones de usuarios en el sistema.</p>
+          <a href="{% url 'sesiones_activas' %}" class="btn btn-ti w-100 mt-3">Ver Sesiones</a>
+        </div>
+      </div>
+
+      <div class="col-md-6 mb-4">
+        <div class="card p-4 shadow-sm border-0">
+          <h5 class="fw-bold text-dark">📊 Estadísticas del Sistema</h5>
+          <p>Ver estadísticas detalladas y reportes del sistema.</p>
+          <a href="{% url 'estadisticas_sistema' %}" class="btn btn-ti w-100 mt-3">Ver Estadísticas</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-4">
+      <div class="col-md-6 mb-4">
+        <div class="card p-4 shadow-sm border-0">
+          <h5 class="fw-bold text-dark">📋 Auditoría del Sistema</h5>
+          <p>Ver registro completo de todas las acciones realizadas en el sistema.</p>
+          <a href="{% url 'lista_auditoria' %}" class="btn btn-ti w-100 mt-3">Ver Auditoría</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Últimos usuarios -->
+    <div class="card shadow-sm">
+      <div class="card-header bg-dark text-white">
+        <h5 class="mb-0">Últimos Usuarios Creados</h5>
+      </div>
+      <div class="card-body">
+        {% if ultimos_usuarios %}
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Usuario</th>
+                  <th>Nombre</th>
+                  <th>Email</th>
+                  <th>Rol</th>
+                  <th>Estado</th>
+                  <th>Fecha Creación</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for usuario in ultimos_usuarios %}
+                <tr>
+                  <td>{{ usuario.username }}</td>
+                  <td>{{ usuario.get_full_name|default:"-" }}</td>
+                  <td>{{ usuario.email|default:"-" }}</td>
+                  <td><span class="badge bg-info">{{ usuario.get_rol_display }}</span></td>
+                  <td>
+                    {% if usuario.is_active %}
+                      <span class="badge bg-success">Activo</span>
+                    {% else %}
+                      <span class="badge bg-danger">Inactivo</span>
+                    {% endif %}
+                  </td>
+                  <td>{{ usuario.date_joined|date:"d/m/Y" }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <p class="text-muted">No hay usuarios registrados.</p>
+        {% endif %}
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    © 2025 Hospital Clínico Herminda Martín — Chillán  
+    <br><small>Ministerio de Salud — Gobierno de Chile</small>
+  </footer>
+</body>
+</html>
+

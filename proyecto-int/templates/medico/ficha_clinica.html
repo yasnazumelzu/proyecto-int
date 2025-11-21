@@ -1,0 +1,178 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Ficha Clínica — Panel Médico</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f1f6ff;
+      font-family: "Segoe UI", sans-serif;
+    }
+    .header-section {
+      background-color: #0072bb;
+      color: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      margin-bottom: 2rem;
+    }
+    .btn-rol {
+      background-color: #0072bb;
+      color: white;
+      border: none;
+    }
+    .btn-rol:hover {
+      background-color: #004080;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-4">
+    <div class="header-section">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h3 class="mb-0">📋 Ficha Clínica: {{ paciente.nombre }}</h3>
+          <p class="mb-0">Hospital Clínico Herminda Martín — Chillán</p>
+        </div>
+        <div>
+          <a href="{% url 'registrar_reporte' %}?paciente={{ paciente.id }}" class="btn btn-light me-2">➕ Nuevo Reporte</a>
+          <a href="{% url 'revisar_pacientes' %}" class="btn btn-outline-light">Volver</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Información del Paciente -->
+    <div class="card mb-4">
+      <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Información del Paciente</h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <p><strong>Nombre:</strong> {{ paciente.nombre }}</p>
+            <p><strong>RUT:</strong> {{ paciente.rut }}</p>
+            <p><strong>Edad:</strong> {{ paciente.edad }} años</p>
+            <p><strong>Fecha de Ingreso:</strong> {{ paciente.fecha_ingreso|date:"d/m/Y" }}</p>
+          </div>
+          <div class="col-md-6">
+            <p><strong>Diagnóstico Principal:</strong> {{ paciente.diagnostico }}</p>
+            {% if paciente.fecha_nacimiento %}
+            <p><strong>Fecha de Nacimiento:</strong> {{ paciente.fecha_nacimiento|date:"d/m/Y" }}</p>
+            {% endif %}
+            {% if paciente.comuna %}
+            <p><strong>Comuna:</strong> {{ paciente.comuna }}</p>
+            {% endif %}
+            {% if paciente.cesfam %}
+            <p><strong>CESFAM:</strong> {{ paciente.cesfam }}</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Historial de Reportes Médicos -->
+    <div class="card mb-4">
+      <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Reportes Médicos ({{ reportes.count }})</h5>
+      </div>
+      <div class="card-body">
+        {% if reportes %}
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Motivo Consulta</th>
+                  <th>Diagnóstico</th>
+                  <th>Estado</th>
+                  <th>Médico</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for reporte in reportes %}
+                <tr>
+                  <td>{{ reporte.fecha_reporte|date:"d/m/Y H:i" }}</td>
+                  <td>{{ reporte.motivo_consulta|truncatewords:10 }}</td>
+                  <td>{{ reporte.diagnostico|truncatewords:10 }}</td>
+                  <td>
+                    <span class="badge 
+                      {% if reporte.estado == 'urgente' %}bg-danger
+                      {% elif reporte.estado == 'pendiente' %}bg-warning
+                      {% elif reporte.estado == 'en_proceso' %}bg-info
+                      {% else %}bg-success{% endif %}">
+                      {{ reporte.get_estado_display }}
+                    </span>
+                  </td>
+                  <td>{{ reporte.medico_responsable.username|default:"-" }}</td>
+                  <td>
+                    <a href="{% url 'detalle_reporte' reporte.id %}" class="btn btn-sm btn-outline-primary">Ver Detalle</a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="alert alert-info">
+            Este paciente no tiene reportes médicos registrados. 
+            <a href="{% url 'registrar_reporte' %}?paciente={{ paciente.id }}" class="alert-link">Registrar primer reporte</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Controles de Enfermería Recientes -->
+    {% if controles %}
+    <div class="card">
+      <div class="card-header bg-info text-white">
+        <h5 class="mb-0">Controles de Enfermería Recientes</h5>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Presión</th>
+                <th>FC</th>
+                <th>FR</th>
+                <th>Temp</th>
+                <th>SpO2</th>
+                <th>Alertas</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for control in controles %}
+              <tr {% if control.alertas %}class="table-warning"{% endif %}>
+                <td>{{ control.fecha_control|date:"d/m/Y H:i" }}</td>
+                <td>
+                  {% if control.presion_arterial_sistolica and control.presion_arterial_diastolica %}
+                    {{ control.presion_arterial_sistolica }}/{{ control.presion_arterial_diastolica }}
+                  {% else %}-{% endif %}
+                </td>
+                <td>{{ control.frecuencia_cardiaca|default:"-" }}</td>
+                <td>{{ control.frecuencia_respiratoria|default:"-" }}</td>
+                <td>{{ control.temperatura|default:"-" }}</td>
+                <td>{{ control.saturacion_oxigeno|default:"-" }}</td>
+                <td>
+                  {% if control.alertas %}
+                    <span class="badge bg-danger">⚠️</span>
+                  {% else %}
+                    <span class="badge bg-success">✓</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</body>
+</html>
+

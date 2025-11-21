@@ -1,0 +1,112 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Consultar Pacientes — Enfermería</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f3fcf6;
+      font-family: "Segoe UI", sans-serif;
+    }
+    .header-section {
+      background-color: #198754;
+      color: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      margin-bottom: 2rem;
+    }
+    .btn-rol {
+      background-color: #198754;
+      color: white;
+      border: none;
+    }
+    .btn-rol:hover {
+      background-color: #126c43;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-4">
+    <div class="header-section">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h3 class="mb-0">🧾 Consultar Pacientes</h3>
+          <p class="mb-0">Hospital Clínico Herminda Martín — Chillán</p>
+        </div>
+        <div>
+          <a href="{% url 'dashboard_enfermero' %}" class="btn btn-outline-light">Volver</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Búsqueda -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <form method="get" class="row g-3">
+          <div class="col-md-10">
+            <input type="text" name="busqueda" class="form-control" placeholder="Buscar por nombre, RUT o diagnóstico..." value="{{ busqueda }}">
+          </div>
+          <div class="col-md-2">
+            <button type="submit" class="btn btn-rol w-100">Buscar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Lista de Pacientes -->
+    <div class="card">
+      <div class="card-header bg-success text-white">
+        <h5 class="mb-0">Lista de Pacientes ({{ pacientes_con_info|length }})</h5>
+      </div>
+      <div class="card-body">
+        {% if pacientes_con_info %}
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Paciente</th>
+                  <th>RUT</th>
+                  <th>Edad</th>
+                  <th>Diagnóstico</th>
+                  <th>Último Control</th>
+                  <th>Total Controles</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in pacientes_con_info %}
+                <tr>
+                  <td><strong>{{ item.paciente.nombre }}</strong></td>
+                  <td>{{ item.paciente.rut }}</td>
+                  <td>{{ item.paciente.edad }} años</td>
+                  <td>{{ item.paciente.diagnostico }}</td>
+                  <td>
+                    {% if item.ultimo_control %}
+                      {{ item.ultimo_control.fecha_control|date:"d/m/Y H:i" }}
+                    {% else %}
+                      <span class="text-muted">Sin controles</span>
+                    {% endif %}
+                  </td>
+                  <td><span class="badge bg-info">{{ item.total_controles }}</span></td>
+                  <td>
+                    <a href="{% url 'detalle_paciente_enfermero' item.paciente.id %}" class="btn btn-sm btn-rol">Ver Detalle</a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="alert alert-info">
+            No se encontraron pacientes. <a href="{% url 'consultar_pacientes' %}">Ver todos</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+

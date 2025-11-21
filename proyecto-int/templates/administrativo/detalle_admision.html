@@ -1,0 +1,153 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Detalle Admisión — Hospital Clínico Herminda Martín</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f4f7fa;
+      font-family: "Segoe UI", sans-serif;
+    }
+    .header-section {
+      background-color: #334155;
+      color: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      margin-bottom: 2rem;
+    }
+    .btn-rol {
+      background-color: #475569;
+      color: white;
+      border: none;
+    }
+    .btn-rol:hover {
+      background-color: #1e293b;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-4">
+    <div class="header-section">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h3 class="mb-0">🏥 Detalle de Admisión #{{ admision.id }}</h3>
+          <p class="mb-0">Hospital Clínico Herminda Martín — Chillán</p>
+        </div>
+        <div>
+          <a href="{% url 'lista_admisiones' %}" class="btn btn-outline-light me-2">Volver</a>
+          {% if not admision.alta_egreso %}
+          <a href="{% url 'registrar_alta_admision' admision.id %}" class="btn btn-success me-2">📋 Registrar Alta</a>
+          {% else %}
+          <a href="{% url 'detalle_alta_egreso' admision.alta_egreso.id %}" class="btn btn-info me-2">Ver Alta</a>
+          {% endif %}
+          <a href="{% url 'nuevo_pago_admision' admision.id %}" class="btn btn-light">Registrar Pago</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-8">
+        <div class="card mb-4">
+          <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Información de la Admisión</h5>
+          </div>
+          <div class="card-body">
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <strong>Paciente:</strong><br>
+                {{ admision.paciente.nombre }}<br>
+                <small class="text-muted">RUT: {{ admision.paciente.rut }}</small>
+              </div>
+              <div class="col-md-6">
+                <strong>Fecha de Admisión:</strong><br>
+                {{ admision.fecha_admision|date:"d/m/Y H:i" }}
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <strong>Tipo de Admisión:</strong><br>
+                <span class="badge bg-info">{{ admision.get_tipo_admision_display }}</span>
+              </div>
+              <div class="col-md-6">
+                <strong>Estado:</strong><br>
+                {% if admision.estado == 'pendiente' %}
+                  <span class="badge bg-warning">{{ admision.get_estado_display }}</span>
+                {% elif admision.estado == 'en_proceso' %}
+                  <span class="badge bg-primary">{{ admision.get_estado_display }}</span>
+                {% elif admision.estado == 'completada' %}
+                  <span class="badge bg-success">{{ admision.get_estado_display }}</span>
+                {% else %}
+                  <span class="badge bg-danger">{{ admision.get_estado_display }}</span>
+                {% endif %}
+              </div>
+            </div>
+            <div class="mb-3">
+              <strong>Motivo de Admisión:</strong><br>
+              {{ admision.motivo_admision }}
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <strong>Servicio:</strong><br>
+                {{ admision.servicio|default:"-" }}
+              </div>
+              <div class="col-md-4">
+                <strong>Médico Responsable:</strong><br>
+                {{ admision.medico_responsable|default:"-" }}
+              </div>
+              <div class="col-md-4">
+                <strong>N° Habitación:</strong><br>
+                {{ admision.numero_habitacion|default:"-" }}
+              </div>
+            </div>
+            {% if admision.observaciones %}
+            <div class="mb-3">
+              <strong>Observaciones:</strong><br>
+              {{ admision.observaciones }}
+            </div>
+            {% endif %}
+            {% if admision.fecha_alta %}
+            <div class="mb-3">
+              <strong>Fecha de Alta:</strong><br>
+              {{ admision.fecha_alta|date:"d/m/Y H:i" }}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Pagos Relacionados</h5>
+          </div>
+          <div class="card-body">
+            {% if pagos %}
+              {% for pago in pagos %}
+              <div class="border-bottom pb-2 mb-2">
+                <strong>Pago #{{ pago.id }}</strong><br>
+                <small>Monto: ${{ pago.monto_total|floatformat:0 }}</small><br>
+                <small>Estado: 
+                  {% if pago.estado == 'pagado' %}
+                    <span class="badge bg-success">{{ pago.get_estado_display }}</span>
+                  {% elif pago.estado == 'pendiente' %}
+                    <span class="badge bg-warning">{{ pago.get_estado_display }}</span>
+                  {% else %}
+                    <span class="badge bg-info">{{ pago.get_estado_display }}</span>
+                  {% endif %}
+                </small>
+              </div>
+              {% endfor %}
+            {% else %}
+              <p class="text-muted">No hay pagos registrados para esta admisión.</p>
+              <a href="{% url 'nuevo_pago_admision' admision.id %}" class="btn btn-sm btn-rol">Registrar Pago</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+
