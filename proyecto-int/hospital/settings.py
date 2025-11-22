@@ -35,12 +35,22 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # Django apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Tailwind
+    'tailwind',
+    'django_browser_reload',
+    'theme',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.mfa', 
     'administrativos',
     'enfermero',
     'medico',
@@ -60,6 +70,9 @@ MIDDLEWARE = [
     'auditoria.middleware.AuditoriaMiddleware',  # Middleware de auditoría
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django_browser_reload.middleware.BrowserReloadMiddleware",
+    'allauth.account.middleware.AccountMiddleware',  # Agregado para resolver el error
+    'UsuarioApp.middleware.OneSessionPerUserMiddleware',
 ]
 
 ROOT_URLCONF = 'hospital.urls'
@@ -157,3 +170,30 @@ LOGOUT_REDIRECT_URL = '/login/'
 
 # URL personalizada del formulario de login
 LOGIN_URL = '/login/'
+
+TAILWIND_APP_NAME = 'theme'
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+
+LOGIN_REDIRECT_URL = "inicio"      # cambia a tu vista real
+LOGOUT_REDIRECT_URL = "account_login"
+ACCOUNT_AUTHENTICATION_METHOD = "username"
+ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_SIGNUP_ALLOWED = False
+
+# ==============================
+# 🕒 CONFIGURACIÓN DE SESIÓN
+# ==============================
+
+SESSION_COOKIE_AGE = 20 * 60  # 20 minutos
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
