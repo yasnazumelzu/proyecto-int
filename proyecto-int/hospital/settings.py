@@ -59,6 +59,8 @@ INSTALLED_APPS = [
     'usuarios',
     'pediatra',
     'auditoria',
+    'django.contrib.sites',
+    'UsuarioApp',
 ]
 
 MIDDLEWARE = [
@@ -182,13 +184,13 @@ AUTHENTICATION_BACKENDS = [
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
-LOGIN_REDIRECT_URL = "inicio"      # cambia a tu vista real
-LOGOUT_REDIRECT_URL = "account_login"
-ACCOUNT_AUTHENTICATION_METHOD = "username"
+SITE_ID = 1
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/accounts/login/"
 ACCOUNT_EMAIL_REQUIRED = False
 ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "none"
-ACCOUNT_SIGNUP_ALLOWED = False
+ACCOUNT_SIGNUP_ALLOWED = False   # 👈 Registro bloqueado
 
 # ==============================
 # 🕒 CONFIGURACIÓN DE SESIÓN
@@ -197,3 +199,13 @@ ACCOUNT_SIGNUP_ALLOWED = False
 SESSION_COOKIE_AGE = 20 * 60  # 20 minutos
 SESSION_SAVE_EVERY_REQUEST = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# ==============================
+# 🧩 CONFIGURACIÓN DE USUARIO
+# ==============================
+
+ACCOUNT_AUTHENTICATION_METHOD = "username"
+ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_SIGNUP_ALLOWED = False

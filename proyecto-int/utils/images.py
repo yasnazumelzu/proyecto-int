@@ -46,3 +46,22 @@ def compress_image(image):
     img = Image.open(image)
     img.thumbnail((400, 400))
     img.save(image, optimize=True, quality=80)
+
+def procesar_foto(ruta):
+    """
+    Recorta y optimiza una imagen
+    """
+    img = Image.open(ruta)
+
+    # convertir a cuadrado
+    min_size = min(img.size)
+    left = (img.width - min_size) / 2
+    top = (img.height - min_size) / 2
+    right = left + min_size
+    bottom = top + min_size
+    img = img.crop((left, top, right, bottom))
+
+    # reducir tamaño
+    img.thumbnail((400, 400))
+
+    img.save(ruta, optimize=True, quality=80)

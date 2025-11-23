@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="text-xl font-bold mb-4">Usuarios del Sistema</h2>
+
+<table class="w-full bg-white rounded shadow">
+    <thead class="bg-gray-200">
+        <tr>
+            <th class="p-3">Usuario</th>
+            <th class="p-3">Rol Hospitalario</th>
+            <th class="p-3">Rol Base</th>
+            <th class="p-3">Último acceso</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for u in usuarios %}
+        <tr class="border-t">
+            <td class="p-3">{{ u.username }}</td>
+            <td class="p-3">{{ u.get_rol_display }}</td>
+            <td class="p-3">{{ u.perfil.get_rol_base_display }}</td>
+            <td class="p-3">
+                {% if u.last_login %}
+                    {{ u.last_login|date:"d-m-Y H:i" }}
+                {% else %}
+                    Nunca
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

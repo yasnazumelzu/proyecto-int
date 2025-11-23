@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="text-xl font-bold mb-4">Cerrar sesión</h2>
+
+<form method="post">
+    {% csrf_token %}
+    <p>¿Estás segura que deseas cerrar sesión?</p>
+    <button class="mt-4 bg-red-600 text-white px-4 py-2 rounded">Cerrar Sesión</button>
+</form>
+
+{% endblock %}
